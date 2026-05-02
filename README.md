@@ -26,6 +26,38 @@ A production-ready GenAI system for intelligent vendor evaluation and negotiatio
     │  Products)  │  └───────────────────────────────┘
     └─────────────┘
 ```
+---
+## Dataset
+
+Uses **spend_analysis_dataset.csv** — 500 real procurement transactions:
+
+| Field | Detail |
+|-------|--------|
+| Suppliers | TechMart Inc., CloudSoft Corp., OfficeSupplies Co., QuickDeliver Ltd., FurniWorks Ltd. |
+| Products | Laptop, Monitor, Printer, Printer Ink, Desk Chair, Whiteboard, Stapler, Notepad, Laptop Bag, Annual Software License |
+| Categories | Electronics, Furniture, Stationery, Office Supplies, Accessories, Software |
+| Rows | 500 transactions across 2024 |
+
+### How the CSV maps to the database
+
+| CSV Column | → | Database |
+|------------|---|----------|
+| `Supplier` | → | `vendors` table |
+| `ItemName` + `Category` | → | `products` table |
+| `Quantity`, `UnitPrice`, `TotalCost`, `PurchaseDate` | → | `purchase_orders` table |
+| `Buyer`, `TransactionID` | → | stored in `notes` field |
+
+Fields not in the CSV are simulated per supplier reliability profile:
+
+| Supplier | Avg Delivery | On-Time Rate | Avg Quality |
+|----------|-------------|--------------|-------------|
+| QuickDeliver Ltd. | 3 days | 95% | 4.0 / 5 |
+| CloudSoft Corp. | 4 days | 92% | 4.5 / 5 |
+| TechMart Inc. | 5 days | 88% | 4.3 / 5 |
+| OfficeSupplies Co. | 7 days | 80% | 3.8 / 5 |
+| FurniWorks Ltd. | 10 days | 65% | 3.4 / 5 |
+
+---
 
 ## Features
 
@@ -179,6 +211,8 @@ POST /api/v1/ai/negotiation-strategy
 
 ```
 procurement-assistant/
+|__data/
+|   |__spend_analysis_dataset.csv
 ├── backend/
 │   ├── app/
 │   │   ├── api/          # FastAPI routers
